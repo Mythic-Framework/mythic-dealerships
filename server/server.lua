@@ -389,22 +389,24 @@ function RegisterCallbacks()
             local target = Fetch:SID(stateId)
 
             if target then
+                local targetCharacter = target:GetData('Character')
+                if targetCharacter then
                 local loanData = Loans:GetAllowedLoanAmount(stateId)
                 if loanData and loanData.maxBorrowable and loanData.maxBorrowable > 0 then
                     local charVehicleLoans = Loans:GetPlayerLoans(stateId, 'vehicle')
-                    if not charVehicleLoans or #charVehicleLoans < loanData.limit then
+                    if not charVehicleLoans or #charVehicleLoans <= 1 then
                         cb({
                             SID = stateId,
                             price = loanData.maxBorrowable,
                             score = loanData.creditScore,
-                            name = string.format('%s %s', target:GetData('First'), target:GetData('Last'))
+                            name = string.format('%s %s', targetCharacter:GetData('First'), targetCharacter:GetData('Last'))
                         })
                     else
                         cb({
                             SID = stateId,
                             price = false,
                             score = loanData.creditScore,
-                            name = string.format('%s %s', target:GetData('First'), target:GetData('Last'))
+                            name = string.format('%s %s', targetCharacter:GetData('First'), targetCharacter:GetData('Last'))
                         })
                     end
                 else
@@ -412,8 +414,11 @@ function RegisterCallbacks()
                         SID = stateId,
                         price = false,
                         score = loanData.creditScore,
-                        name = string.format('%s %s', target:GetData('First'), target:GetData('Last'))
+                        name = string.format('%s %s', targetCharacter:GetData('First'), targetCharacter:GetData('Last'))
                     })
+                end
+                else
+                    cb(false)
                 end
             else
                 cb(false)
