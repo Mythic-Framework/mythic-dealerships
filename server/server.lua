@@ -20,6 +20,7 @@ function RetrieveComponents()
     Default = exports['mythic-base']:FetchComponent('Default')
     Chat = exports['mythic-base']:FetchComponent('Chat')
     MDT = exports['mythic-base']:FetchComponent('MDT')
+    Version = exports['mythic-base']:FetchComponent('Version')
 end
 
 AddEventHandler('Core:Shared:Ready', function()
@@ -43,6 +44,7 @@ AddEventHandler('Core:Shared:Ready', function()
         'Wallet',
         'Default',
         'MDT',
+        'Version',
     }, function(error)
         if #error > 0 then return end -- Do something to handle if not all dependencies loaded
         RetrieveComponents()
@@ -304,6 +306,8 @@ AddEventHandler('Core:Shared:Ready', function()
                 _hashToVeh[v.dealership][GetHashKey(v.vehicle)] = v.vehicle
             end
         end
+
+        Version:Check('Mythic-Framework/Mythic-VersionCheckers', GetCurrentResourceName())
     end)
 end)
 

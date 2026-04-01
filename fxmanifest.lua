@@ -1,8 +1,9 @@
 fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
-client_script "@mythic-base/components/cl_error.lua"
-client_script "@mythic-pwnzor/client/check.lua"
+
+version '1.0.0'
+repository 'https://github.com/Mythic-Framework/mythic-dealerships'
 
 server_scripts {
     'server/server.lua',
@@ -16,6 +17,8 @@ server_scripts {
     'server/gov_fleets.lua',
 }
 
+client_script "@mythic-base/components/cl_error.lua"
+client_script "@mythic-pwnzor/client/check.lua"
 client_scripts {
     'client/utils.lua',
     'client/client.lua',
