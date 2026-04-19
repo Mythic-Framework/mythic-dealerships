@@ -5,6 +5,8 @@ local catalogData = {}
 local catalogCurrent
 
 local allSpawnedCatalogVehicles = {}
+local _catalogSpawning = false
+local _catalogPendingVeh = nil
 
 function SetupCatalogCams()
     catalogCam = CreateCam('DEFAULT_SCRIPTED_CAMERA', true)
@@ -57,24 +59,35 @@ function ForceCloseCatalog()
 end
 
 function SetCatalogVehicle(veh)
-    if not veh or (veh and GetEntityModel(catalogVeh) ~= GetHashKey(veh)) then -- Delete the vehicle
+    if _catalogSpawning then
+        _catalogPendingVeh = veh
+        return
+    end
+
+    local currentModel = (catalogVeh and DoesEntityExist(catalogVeh)) and GetEntityModel(catalogVeh) or 0
+    if not veh or currentModel ~= GetHashKey(veh) then
         if catalogVeh and DoesEntityExist(catalogVeh) then
             Game.Vehicles:Delete(catalogVeh)
             catalogVeh = false
         end
 
         if veh then
-            
-            Game.Vehicles:SpawnLocal(_catalog.vehicle.xyz, veh, _catalog.vehicle.w, function(veh)
-                catalogVeh = veh
-
-                table.insert(allSpawnedCatalogVehicles, veh)
-
+            _catalogSpawning = true
+            Game.Vehicles:SpawnLocal(_catalog.vehicle.xyz, veh, _catalog.vehicle.w, function(spawned)
+                catalogVeh = spawned
+                table.insert(allSpawnedCatalogVehicles, spawned)
                 FreezeEntityPosition(catalogVeh, true)
                 SetVehicleDoorsLocked(catalogVeh, 2)
                 SetVehicleLights(catalogVeh, 2)
                 SetVehicleNumberPlateText(catalogVeh, '')
                 RollDownWindows(catalogVeh)
+
+                _catalogSpawning = false
+                if _catalogPendingVeh then
+                    local pending = _catalogPendingVeh
+                    _catalogPendingVeh = nil
+                    SetCatalogVehicle(pending)
+                end
             end)
         end
     end
@@ -106,7 +119,9 @@ function OpenCatalogMenu(catalogName)
         end
 
         allSpawnedCatalogVehicles = {}
-        
+        _catalogSpawning = false
+        _catalogPendingVeh = nil
+
         Hud:Show()
         Wait(250)
         catalogData = {}
