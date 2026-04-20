@@ -2,7 +2,7 @@ characterLoaded = false
 _withinShowroom = false
 _withinCatalog = false
 
-_justBoughtFuckingBike = {}
+_recentBikePurchases = {}
 -- DEALERSHIPS = {}
 
 AddEventHandler('Dealerships:Shared:DependencyUpdate', RetrieveComponents)
@@ -75,7 +75,7 @@ RegisterNetEvent('Characters:Client:Logout')
 AddEventHandler('Characters:Client:Logout', function()
     characterLoaded = false
 
-    _justBoughtFuckingBike = {}
+    _recentBikePurchases = {}
 end)
 
 -- AddEventHandler('Proxy:Shared:RegisterReady', function()
